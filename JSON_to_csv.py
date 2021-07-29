@@ -9,10 +9,19 @@ from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from dotenv import load_dotenv
+import os
 
 
-## https://api.opendota.com/api/Matches/5992559409?api_key=52dbfbf6-b204-43cf-9411-6715cd68f106
+
 ## 1 query parameter & thats the match ID
+
+
+load_dotenv()
+
+API_KEY = os.getenv('DOTA_API_KEY')
+
+
 
 ##Gets 100 match ID's from a random sample
 def getPublicMatchesResponse():
@@ -20,7 +29,7 @@ def getPublicMatchesResponse():
     match_id_list2 = []
     http = urllib3.PoolManager()
     first = http.request('GET',
-                         'https://api.opendota.com/api/publicMatches?api_key=52dbfbf6-b204-43cf-9411-6715cd68f106')
+                         f'https://api.opendota.com/api/publicMatches?api_key={API_KEY}')
 
     dataFirst = json.loads(first.data.decode('utf-8'))
 
@@ -40,7 +49,7 @@ def getPublicMatchesResponse():
     newMatchesData = []
 
     newMatch = http.request('GET',
-                            f'https://api.opendota.com/api/matches/{match_id}?api_key=52dbfbf6-b204-43cf-9411-6715cd68f106')
+                            f'https://api.opendota.com/api/matches/{match_id}?{API_KEY}')
     newData = json.loads(newMatch.data.decode('utf-8'))
     first_match = newData['players']
     print(first_match)
@@ -52,7 +61,7 @@ def getPublicMatchesResponse():
     n = 0
     for j in match_id_list:
         newMatchData = http.request('GET',
-                                    f'https://api.opendota.com/api/matches/{j}?api_key=52dbfbf6-b204-43cf-9411-6715cd68f106')
+                                    f'https://api.opendota.com/api/matches/{j}?api_key={API_KEY}')
         newMatchesData.append(newMatchData)
         dataTest = json.loads(newMatchesData[n].data.decode('utf-8'))
         n += 1
